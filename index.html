@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gaegu&family=Nanum+Brush+Script&family=Yuji+Boku&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .section {
+        min-height: 100vh;
+        padding: 100px 20px 40px;
+        text-align: center;
+        scroll-behavior: smooth;
+      }
+
+      #animated-text span {
+        opacity: 0;
+        display: inline-block;
+        transition: opacity 0.3s ease;
+        color: green;
+        font-size: 32px;
+        font-family: 'Do Hyeon', sans-serif;
+      }
+
+      #animated-text span.visible {
+        opacity: 1;
+      }
+
+      .image-text {
+        font-size: x-large;
+        position: absolute;
+        top: 70%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: green;
+      }
+
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; 
+      }
+
+      .profile-wrapper {
+        display: flex;
+        align-items: center;
+      }
+
+      .profile-image img {
+        border-radius: 10px;
+        margin-right: 40px;
+      }
+
+      .profile-info h2 {
+        color: green;
+        font-family: 'Do Hyeon', sans-serif;
+        font-size: 32px;
+        margin-bottom: 10px;
+      }
+
+      .profile-info h4 {
+        color: green;
+        margin-bottom: 5px;
+      }
+
+      .profile-info a.github-link {
+        display: inline-block;
+        font-size: 18px;
+        color: green;
+        text-decoration: none;
+        margin-bottom: 10px;
+      }
+
+      .profile-info p {
+        font-size: 16px;
+        color: green;
+        margin-top: 10px;
+      }
+
+      .profile-info a:hover {
+        text-decoration: underline;
+      }
+
+      .hidden {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+      }
+
+      .profile-wrapper.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="container">
+        <div class="logo">Portfolio</div>
+        <ul class="nav">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="pro.html">Programmers</a></li>
+          <li><a href="project.html">project</a></li>
+          <li><a href="team.html">Team</a></li>
+        </ul>
+      </div>
+    </nav>
+
+
+    <main>
+        <div class="image-text">
+          <section id="home" class="section">
+        <h1 id="animated-text">minyeong's portfolio</h1>
+    </div>
+
+    <section class="main">
+      <div class="container">
+        <div class="profile-wrapper hidden">
+          <div class="profile-image">
+            <a href="https://github.com/minyeong0125" target="_blank">
+              <img
+                src="https://github.com/minyeong0125.png"
+                alt="GitHub Profile"
+                height="200px"
+              />
+            </a>
+          </div>
+    
+          <div class="profile-info">
+            <h2>박민영</h2>
+            <h4>Github: <a href="https://github.com/minyeong0125" class="github-link" target="_blank">minyeong0125</a></h4>
+            <p>Email: minyeong05125@gmail.com</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const textElement = document.getElementById("animated-text");
+    const text = "minyeong's portfolio";
+    textElement.innerHTML = "";
+
+    for (let i = 0; i < text.length; i++) {
+      const span = document.createElement("span");
+      span.textContent = text[i];
+      textElement.appendChild(span);
+    }
+
+    const spans = textElement.querySelectorAll("span");
+    let i = 0;
+
+    function showNextChar() {
+      if (i < spans.length) {
+        spans[i].classList.add("visible");
+        i++;
+        setTimeout(showNextChar, 100);
+      } else {
+        // 모든 글자가 나온 후에 .profile-wrapper 보이게
+        setTimeout(() => {
+          const profile = document.querySelector(".profile-wrapper");
+          profile.classList.remove("hidden");
+          profile.classList.add("show");
+        }, 300); // 약간의 여유 딜레이
+      }
+    }
+
+    showNextChar();
+  });
+</script>
+
+
+  </body>
+</html>
