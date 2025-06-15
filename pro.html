@@ -14,25 +14,115 @@
     <style>
       .main {
         color: green;
+        font-size: 20px;
+        margin: 30px;
       }
 
-      h3 {
-        color: green;
+      .team-slider {
+        position: relative;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px 0;
+        overflow: hidden;
       }
 
-      .image {
+      #teamContainer {
         display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin: 0;
-        padding: 0;
+        gap: 20px;
+        transition: transform 0.5s ease;
       }
-      img {
+
+      .member-box {
+        background-color: black;
+        border: 1px solid green;
         border-radius: 10px;
+        padding: 15px;
+        min-width: 230px;
+        max-width: 220px;
+        text-align: center;
+        color: #fff;
+        font-family: 'DOSGothic', monospace;
+      }
+
+      .member-box img {
         width: 100%;
-        max-width: 300px;
-        margin: 35px;
-        height: auto;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        cursor: pointer;
+      }
+
+      .member-box a.github {
+        display: inline-block;
+        color: green;
+        text-decoration: none;
+        margin-bottom: 10px;
+      }
+
+      .arrow-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        border: 2px solid #fff;
+        color: #fff;
+        font-size: 20px;
+        padding: 10px 20px;
+        cursor: pointer;
+        z-index: 10;
+        transition: 0.3s;
+        border-radius: 50%;
+      }
+
+      #prevBtn {
+        left: 10px;
+      }
+
+      #nextBtn {
+        right: 10px;
+      }
+
+      .intro-container {
+        background-color: green;
+        border: 2px solid green;
+        border-radius: 10px;
+        padding: 30px;
+        margin: 50px auto;
+        max-width: 800px;
+        text-align: center;
+        color: #fff;
+      }
+
+      /* 모달 스타일 */
+      #imageModal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+
+      #imageModal img {
+        max-width: 90%;
+        max-height: 90%;
+        border: 5px solid white;
+        border-radius: 10px;
+      }
+
+      #modalClose {
+        position: absolute;
+        top: 30px;
+        right: 40px;
+        font-size: 40px;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
       }
     </style>
   </head>
@@ -53,12 +143,121 @@
       <h1>Programmers</h1>
     </section>
 
-    <h3>사진</h3>
-
-    <div class="image">
-      <img src="image/secon1.jpg" />
-      <img src="image/secon2.jpg" />
-      <img src="image/secon3.jpg" />
+    <div class="intro-container">
+      <h2>사진</h2>
+      <div class="team-slider">
+        <button id="prevBtn" class="arrow-btn">&#10094;</button>
+        <div class="team-container" id="teamContainer">
+          <div class="member-box"><img src="001.png" /></div>
+          <div class="member-box"><img src="002.png" /></div>
+          <div class="member-box"><img src="003.png" /></div>
+          <div class="member-box"><img src="004.png" /></div>
+          <div class="member-box"><img src="005.png" /></div>
+        </div>
+        <button id="nextBtn" class="arrow-btn">&#10095;</button>
+      </div>
     </div>
+
+    <!-- 모달 HTML -->
+    <div id="imageModal">
+      <span id="modalClose">&times;</span>
+      <img id="modalImage" />
+    </div>
+
+    <script>
+      const teamContainer = document.getElementById('teamContainer')
+      const nextBtn = document.getElementById('nextBtn')
+      const prevBtn = document.getElementById('prevBtn')
+
+      let originalBoxes = Array.from(document.querySelectorAll('.member-box'))
+      const visibleCount = 3
+      const boxWidth = originalBoxes[0].offsetWidth + 20
+
+      const clonesBefore = originalBoxes
+        .slice(-visibleCount)
+        .map((box) => box.cloneNode(true))
+      const clonesAfter = originalBoxes
+        .slice(0, visibleCount)
+        .map((box) => box.cloneNode(true))
+
+      clonesBefore.forEach((clone) =>
+        teamContainer.insertBefore(clone, teamContainer.firstChild)
+      )
+      clonesAfter.forEach((clone) => teamContainer.appendChild(clone))
+
+      const allBoxes = Array.from(document.querySelectorAll('.member-box'))
+      let currentIndex = visibleCount
+
+      teamContainer.style.transform = `translateX(-${
+        currentIndex * boxWidth
+      }px)`
+
+      function updateSlider(animate = true) {
+        teamContainer.style.transition = animate
+          ? 'transform 0.5s ease'
+          : 'none'
+        teamContainer.style.transform = `translateX(-${
+          currentIndex * boxWidth
+        }px)`
+      }
+
+      nextBtn.addEventListener('click', () => {
+        currentIndex++
+        updateSlider(true)
+
+        teamContainer.addEventListener(
+          'transitionend',
+          () => {
+            if (currentIndex >= allBoxes.length - visibleCount) {
+              currentIndex = visibleCount
+              updateSlider(false)
+            }
+          },
+          { once: true }
+        )
+      })
+
+      prevBtn.addEventListener('click', () => {
+        currentIndex--
+        updateSlider(true)
+
+        teamContainer.addEventListener(
+          'transitionend',
+          () => {
+            if (currentIndex < visibleCount) {
+              currentIndex = allBoxes.length - visibleCount * 2
+              updateSlider(false)
+            }
+          },
+          { once: true }
+        )
+      })
+
+      window.addEventListener('resize', () => {
+        updateSlider(false)
+      })
+
+      // 이미지 클릭 시 모달 열기
+      const modal = document.getElementById('imageModal')
+      const modalImg = document.getElementById('modalImage')
+      const modalClose = document.getElementById('modalClose')
+
+      document.querySelectorAll('.member-box img').forEach((img) => {
+        img.addEventListener('click', () => {
+          modal.style.display = 'flex'
+          modalImg.src = img.src
+        })
+      })
+
+      modalClose.addEventListener('click', () => {
+        modal.style.display = 'none'
+      })
+
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.style.display = 'none'
+        }
+      })
+    </script>
   </body>
 </html>
